@@ -747,7 +747,6 @@ BaseType_t TLS_Init( void ** ppvContext,
 
         if( xResult == CKR_OK )
         {
-            mbedtls_debug_set_threshold( 5 );
             mbedtls_ctr_drbg_init( &pxCtx->xMbedDrbgCtx );
             mbedTLSResult = mbedtls_ctr_drbg_seed( &pxCtx->xMbedDrbgCtx,
                                                    prvEntropyCallback,

@@ -1023,14 +1023,21 @@ BaseType_t TLS_Send( void * pvContext,
     BaseType_t xResult = MBEDTLS_ERR_SSL_INTERNAL_ERROR;
     TLSContext_t * pxCtx = ( TLSContext_t * ) pvContext; /*lint !e9087 !e9079 Allow casting void* to other types. */
     size_t xWritten = 0;
+    size_t xWriteLength;
 
     if( ( NULL != pxCtx ) && ( TLS_HANDSHAKE_SUCCESSFUL == pxCtx->xTLSHandshakeState ) )
     {
         while( xWritten < xMsgLength )
         {
+            xWriteLength = xMsgLength - xWritten;
+
+            if( xWriteLength > MBEDTLS_SSL_OUT_CONTENT_LEN )
+            {
+                xWriteLength = MBEDTLS_SSL_OUT_CONTENT_LEN;
+            }
             xResult = mbedtls_ssl_write( &pxCtx->xMbedSslCtx,
                                          pucMsg + xWritten,
-                                         xMsgLength - xWritten );
+                                         xWriteLength );
 
             if( 0 < xResult )
             {

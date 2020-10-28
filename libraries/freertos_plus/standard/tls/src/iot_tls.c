@@ -974,7 +974,7 @@ BaseType_t TLS_Recv( void * pvContext,
                      unsigned char * pucReadBuffer,
                      size_t xReadLength )
 {
-    BaseType_t xResult = 0;
+    BaseType_t xResult = MBEDTLS_ERR_SSL_INTERNAL_ERROR;
     TLSContext_t * pxCtx = ( TLSContext_t * ) pvContext; /*lint !e9087 !e9079 Allow casting void* to other types. */
     size_t xRead = 0;
 
@@ -1000,10 +1000,6 @@ BaseType_t TLS_Recv( void * pvContext,
              * but don't flag an error. */
         } while( ( xResult == MBEDTLS_ERR_SSL_WANT_READ ) || ( xResult == MBEDTLS_ERR_SSL_WANT_WRITE ));
     }
-    else
-    {
-        xResult = MBEDTLS_ERR_SSL_INTERNAL_ERROR;
-    }
 
     if( xResult >= 0 )
     {
@@ -1024,7 +1020,7 @@ BaseType_t TLS_Send( void * pvContext,
                      const unsigned char * pucMsg,
                      size_t xMsgLength )
 {
-    BaseType_t xResult = 0;
+    BaseType_t xResult = MBEDTLS_ERR_SSL_INTERNAL_ERROR;
     TLSContext_t * pxCtx = ( TLSContext_t * ) pvContext; /*lint !e9087 !e9079 Allow casting void* to other types. */
     size_t xWritten = 0;
 
@@ -1057,10 +1053,6 @@ BaseType_t TLS_Send( void * pvContext,
                 break;
             }
         }
-    }
-    else
-    {
-        xResult = MBEDTLS_ERR_SSL_INTERNAL_ERROR;
     }
 
     if( 0 <= xResult )

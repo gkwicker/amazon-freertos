@@ -1025,6 +1025,19 @@ BaseType_t TLS_Send( void * pvContext,
     size_t xWritten = 0;
     size_t xWriteLength;
 
+
+    if( NULL != pxCtx )
+    {
+        TLS_PRINT( ( "%s : ctx: %p msg: %p len: %lu, hsState=%d\r\n",
+                   __FUNCTION__,
+                   pvContext, pucMsg, xMsgLength, pxCtx->xTLSHandshakeState ) );
+    }
+    else
+    {
+        TLS_PRINT( ( "%s : ctx: %p msg: %p len: %lu, HS not successful\r\n",
+                   __FUNCTION__,
+                   pvContext, pucMsg, xMsgLength ) );
+    }
     if( ( NULL != pxCtx ) && ( TLS_HANDSHAKE_SUCCESSFUL == pxCtx->xTLSHandshakeState ) )
     {
         while( xWritten < xMsgLength )
@@ -1056,6 +1069,9 @@ BaseType_t TLS_Send( void * pvContext,
                      ( MBEDTLS_ERR_SSL_WANT_READ != xResult ) )
             {
                 /* Hard error: invalidate the context and stop. */
+                TLS_PRINT( ( "ERROR: send failed with error code %s : %s \r\n",
+                             mbedtlsHighLevelCodeOrDefault( xResult ),
+                             mbedtlsLowLevelCodeOrDefault( xResult ) ) );
                 prvFreeContext( pxCtx );
                 break;
             }

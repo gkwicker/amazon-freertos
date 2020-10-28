@@ -981,7 +981,8 @@ BaseType_t TLS_Recv( void * pvContext,
     if( ( NULL != pxCtx ) && ( TLS_HANDSHAKE_SUCCESSFUL == pxCtx->xTLSHandshakeState ) )
     {
         /* This routine will return however many bytes are returned from from mbedtls_ssl_read
-         * immediately unless MBEDTLS_ERR_SSL_WANT_READ is returned, in which case we try again. */
+         * immediately unless MBEDTLS_ERR_SSL_WANT_READ/WRITE is returned, in which case we try
+         * again. */
         do
         {
             xResult = mbedtls_ssl_read( &pxCtx->xMbedSslCtx,
@@ -997,7 +998,7 @@ BaseType_t TLS_Recv( void * pvContext,
             /* If xResult == 0, then no data was received (and there is no error).
              * The secure sockets API supports non-blocking read, so stop the loop,
              * but don't flag an error. */
-        } while( ( xResult == MBEDTLS_ERR_SSL_WANT_READ ) );
+        } while( ( xResult == MBEDTLS_ERR_SSL_WANT_READ ) || ( xResult == MBEDTLS_ERR_SSL_WANT_WRITE ));
     }
     else
     {
@@ -1048,7 +1049,8 @@ BaseType_t TLS_Send( void * pvContext,
                 xResult = 0;
                 break;
             }
-            else if( MBEDTLS_ERR_SSL_WANT_WRITE != xResult )
+            else if( ( MBEDTLS_ERR_SSL_WANT_WRITE != xResult ) &&
+                     ( MBEDTLS_ERR_SSL_WANT_READ != xResult ) )
             {
                 /* Hard error: invalidate the context and stop. */
                 prvFreeContext( pxCtx );

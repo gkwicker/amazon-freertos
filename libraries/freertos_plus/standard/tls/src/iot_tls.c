@@ -1008,6 +1008,10 @@ BaseType_t TLS_Recv( void * pvContext,
     else
     {
         /* xResult < 0 is a hard error, so invalidate the context and stop. */
+        TLS_PRINT( ( "%s: receive failed with error code %s : %s \r\n",
+                     __FUNCTION__,
+                     mbedtlsHighLevelCodeOrDefault( xResult ),
+                     mbedtlsLowLevelCodeOrDefault( xResult ) ) );
         prvFreeContext( pxCtx );
     }
 
@@ -1094,6 +1098,8 @@ void TLS_Cleanup( void * pvContext )
 
     if( NULL != pxCtx )
     {
+        TLS_PRINT( ( "%s: freeing TLS context \r\n",
+                     __FUNCTION__ ));
         prvFreeContext( pxCtx );
 
         /* Free memory. */
